@@ -31,6 +31,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public ViewHolder(final View itemView) {
             super(itemView);
 
+
             itemView.setClickable(true);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -87,5 +88,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return mDatastructs.size();
+    }
+    public void addItem(DataStruct ds){
+        mDatastructs.add(ds);
+        this.notifyDataSetChanged();
     }
 }

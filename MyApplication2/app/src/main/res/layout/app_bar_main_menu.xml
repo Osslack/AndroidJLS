@@ -19,8 +19,9 @@
     <android.support.design.widget.FloatingActionButton android:id="@+id/fab"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_gravity="bottom|end" android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_input_add"
+        android:src="@drawable/ic_image_camera"
         android:theme="@style/AppTheme"
+        android:scaleType="center"
         style="@style/AppTheme" />
 
 </android.support.design.widget.CoordinatorLayout>
