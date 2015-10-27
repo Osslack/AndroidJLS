@@ -6,6 +6,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
@@ -25,13 +29,10 @@ public class MainActivity extends AppCompatActivity {
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
         // specify an adapter (see also next example)
-        String[] myDataset = new String[100];
-        for(int i = 0;i<100;++i){
-            myDataset[i] = "Kappa" + i;
-        }
-        mAdapter = new MyAdapter(myDataset);
+        List<DataStruct> structs = DataStruct.createContactsList(100);
+
+        mAdapter = new MyAdapter(structs);
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -57,5 +58,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    public void buttonPress(View view){
+
+        Toast.makeText(getApplicationContext(), "You pressed the magic button for",
+                Toast.LENGTH_LONG).show();
     }
 }
