@@ -18,7 +18,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -95,7 +94,7 @@ public class MainMenu extends AppCompatActivity
                         fOut.flush();
                         fOut.close();
                         mAdapter.addData(LE);
-                        Toast.makeText(getApplicationContext(), "Picture" + pic_number, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Picture" + pic_number, Toast.LENGTH_SHORT).show();
                         ++pic_number;
                         editor.putInt(key_pic_number, pic_number);
 
