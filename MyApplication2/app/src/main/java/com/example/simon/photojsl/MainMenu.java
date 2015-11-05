@@ -30,6 +30,7 @@ public class MainMenu extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static final int PHOTO_REQUEST = 1;
+    static final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
     static final String preference_file_key = "Jendrik_Simon_Loiusa_Preference_File_1337";
     static final String key_pic_number = "JSL_PIC_NUMBER";
     static public int pic_number = 0;
@@ -54,7 +55,7 @@ public class MainMenu extends AppCompatActivity
         mRecyclerView.setAdapter(mAdapter);
         sharedPref = mContext.getSharedPreferences(preference_file_key, mContext.MODE_PRIVATE);
         editor = sharedPref.edit();
-        pic_number = sharedPref.getInt(key_pic_number,0);
+        pic_number = sharedPref.getInt(key_pic_number, 0);
 
 
 
@@ -82,22 +83,24 @@ public class MainMenu extends AppCompatActivity
             try {
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 if (bitmap != null) {
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
-                    SimpleDateFormat timestamp = new SimpleDateFormat("yyyyMMdd_hhmmss");
-                    File file = new File(mContext.getFilesDir(),"Picture" + pic_number);
-                    FileOutputStream fOut = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+                    for(int i = 0;i<100;++i) {
+                        File file = new File(mContext.getFilesDir(), "Picture" + pic_number);
+                        FileOutputStream fOut = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
 
-                    ListEntry LE;
-                    LE = new ListEntry(bitmap, file.getName(), df.format(new Date()));
-                    fOut.flush();
-                    fOut.close();
-                    mAdapter.addData(LE);
-                    Toast.makeText(getApplicationContext(), "Picture" + pic_number, Toast.LENGTH_SHORT).show();
-                    ++pic_number;
-                    editor.putInt(key_pic_number,pic_number);
-                    editor.commit();
+                        ListEntry LE;
+                        LE = new ListEntry(bitmap, file.getName(), df.format(new Date()));
+                        editor.putString(file.getName(), df.format(new Date()).toString());
+                        editor.apply();
+                        fOut.flush();
+                        fOut.close();
+                        mAdapter.addData(LE);
+                        Toast.makeText(getApplicationContext(), "Picture" + pic_number, Toast.LENGTH_SHORT).show();
+                        ++pic_number;
+                        editor.putInt(key_pic_number, pic_number);
 
+                        editor.apply();
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
