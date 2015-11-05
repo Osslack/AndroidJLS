@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -62,7 +63,8 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
 
                 @Override
                 public void onClick(View v) {
-
+                    //TODO: Call Detail-View -> Create Detail-View first
+                    Toast.makeText(itemView.getContext(), "The Item Clicked is: " + ((TextView) v.findViewById(R.id.textView2)).getText(), Toast.LENGTH_SHORT).show();
                 }
             });
 
