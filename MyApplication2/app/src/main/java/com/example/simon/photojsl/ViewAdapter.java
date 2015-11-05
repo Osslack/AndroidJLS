@@ -7,17 +7,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by simon on 27.10.15.
  */
 public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
-    private List<ListEntry> mListEntries = null;
-
-    public void addItem(ListEntry listEntry){
-        mListEntries.add(0,listEntry);
+    private ArrayList<ListEntry> mListEntries;
+    public ViewAdapter(ArrayList<ListEntry> ListEntries){
+        this.mListEntries = ListEntries;
     }
+
+    public void addData(ListEntry listEntry){
+        this.mListEntries.add(0,listEntry);
+        notifyDataSetChanged();
+    }
+
     @Override
     public ViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_entry, parent, false);
@@ -25,12 +30,15 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
         return vh;
     }
 
+
+
     @Override
     public void onBindViewHolder(ViewAdapter.ViewHolder holder, int position) {
         ListEntry lEntry = mListEntries.get(position);
         holder.mTextView1.setText(lEntry.getTitle());
         holder.mTextView2.setText((lEntry.getDate()));
         holder.mImageView1.setImageBitmap(lEntry.getImage());
+
     }
 
     @Override

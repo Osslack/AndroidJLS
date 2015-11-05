@@ -1,6 +1,8 @@
 package com.example.simon.photojsl;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -28,10 +30,15 @@ public class MainMenu extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static final int PHOTO_REQUEST = 1;
+    static final String preference_file_key = "Jendrik_Simon_Loiusa_Preference_File_1337";
+    static final String key_pic_number = "JSL_PIC_NUMBER";
     static public int pic_number = 0;
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private ViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private Context mContext;
+    private SharedPreferences sharedPref;
+    private SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +49,12 @@ public class MainMenu extends AppCompatActivity
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new ViewAdapter();
+        mContext = getApplicationContext();
+        mAdapter = new ViewAdapter(Model.load_entries(mContext));
         mRecyclerView.setAdapter(mAdapter);
-
+        sharedPref = mContext.getSharedPreferences(preference_file_key, mContext.MODE_PRIVATE);
+        editor = sharedPref.edit();
+        pic_number = sharedPref.getInt(key_pic_number,0);
 
 
 
@@ -72,15 +82,21 @@ public class MainMenu extends AppCompatActivity
             try {
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 if (bitmap != null) {
-                    File file = new File(getApplicationContext().getFilesDir(), "Picture" + pic_number);
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
+                    SimpleDateFormat timestamp = new SimpleDateFormat("yyyyMMdd_hhmmss");
+                    File file = new File(mContext.getFilesDir(),"Picture" + pic_number);
                     FileOutputStream fOut = new FileOutputStream(file);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-                    SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
-                    ListEntry LE = new ListEntry(bitmap, "Picture" + pic_number, df.format(new Date()));
+
+                    ListEntry LE;
+                    LE = new ListEntry(bitmap, file.getName(), df.format(new Date()));
                     fOut.flush();
                     fOut.close();
-                    Toast.makeText(getApplicationContext(), "picture" + pic_number, Toast.LENGTH_SHORT).show();
+                    mAdapter.addData(LE);
+                    Toast.makeText(getApplicationContext(), "Picture" + pic_number, Toast.LENGTH_SHORT).show();
                     ++pic_number;
+                    editor.putInt(key_pic_number,pic_number);
+                    editor.commit();
 
                 }
             } catch (IOException e) {
