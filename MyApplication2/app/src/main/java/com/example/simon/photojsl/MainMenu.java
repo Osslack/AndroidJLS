@@ -34,7 +34,7 @@ public class MainMenu extends AppCompatActivity
 
     static final int PHOTO_REQUEST = 1;
     static final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
-    static final String preference_file_key = "Jendrik_Simon_Loiusa_Preference_File_1337";
+    static final String preference_file_key = "Jendrik_Simon_Louisa_Preference_File_1337";
     static final String key_pic_number = "JSL_PIC_NUMBER";
     static public int pic_number = 0;
     private RecyclerView mRecyclerView;
@@ -43,7 +43,7 @@ public class MainMenu extends AppCompatActivity
     private Context mContext;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
-    private String mCurrentPhotoFile;
+    private static String mCurrentPhotoFile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,19 +68,11 @@ public class MainMenu extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                File photoFile = new File(mContext.getFilesDir(), "Picture" + pic_number);
-
-
-                try {
-                    File photoFile2 = File.createTempFile("picture", ".jpg");
-                mCurrentPhotoFile = photoFile2.getPath();
-                    if(photoFile != null){
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile2));
-                        startActivityForResult(intent, PHOTO_REQUEST);
-                    }
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
+                File photoFile = new File(mContext.getFilesDir(), "Picture" + pic_number +".jpg");
+                Uri pictureUri = Uri.fromFile(photoFile);
+                mCurrentPhotoFile = photoFile.getAbsolutePath();
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(intent, PHOTO_REQUEST);
 
 
             }
@@ -101,15 +93,18 @@ public class MainMenu extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data) {
         if (requestCode == PHOTO_REQUEST) {
+
             try {
+                File picture = new File(mCurrentPhotoFile);
                 //Uri pathToPic = data.getData();
                 //if (pathToPic != null) {
-
-                Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(mCurrentPhotoFile));
+                
+                Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoFile);
                 File file = new File(mContext.getFilesDir(), "Thumb" + pic_number);
                 FileOutputStream fOut = new FileOutputStream(file);
                 if(bitmap != null) {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+                    Toast.makeText(getApplicationContext(), "Picture" + pic_number, Toast.LENGTH_SHORT).show();
                 }
                 ListEntry LE;
                 LE = new ListEntry(bitmap, file.getName(), df.format(new Date()));
@@ -118,7 +113,7 @@ public class MainMenu extends AppCompatActivity
                 fOut.flush();
                 fOut.close();
                 mAdapter.addData(LE);
-                Toast.makeText(getApplicationContext(), "Picture" + pic_number, Toast.LENGTH_SHORT).show();
+
                 ++pic_number;
                 editor.putInt(key_pic_number, pic_number);
 
