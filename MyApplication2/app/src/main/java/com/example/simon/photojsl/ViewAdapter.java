@@ -1,5 +1,6 @@
 package com.example.simon.photojsl;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,14 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
         this.mListEntries = ListEntries;
     }
 
+    public ListEntry getEntryByTitle (String title){
+        for(ListEntry LE : mListEntries){
+            if(LE.getTitle() == title){
+                return LE;
+            }
+        }
+        return null;
+    }
     public void addData(ListEntry listEntry){
         this.mListEntries.add(0,listEntry);
         notifyDataSetChanged();
@@ -64,6 +73,10 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     //TODO: Call Detail-View -> Create Detail-View first
+                    Intent detail_view = new Intent(v.getContext(), DetailView.class);
+                    detail_view.putExtra("Titel", mTextView1.getText());
+                    v.getContext().startActivity(detail_view);
+
                     Toast.makeText(itemView.getContext(), "The Item Clicked is: " + ((TextView) v.findViewById(R.id.textView2)).getText(), Toast.LENGTH_SHORT).show();
                 }
             });

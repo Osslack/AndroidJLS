@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -18,8 +20,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -39,6 +43,7 @@ public class MainMenu extends AppCompatActivity
     private Context mContext;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
+    private String mCurrentPhotoFile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +68,21 @@ public class MainMenu extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, PHOTO_REQUEST);
+                File photoFile = new File(mContext.getFilesDir(), "Picture" + pic_number);
+
+
+                try {
+                    File photoFile2 = File.createTempFile("picture", ".jpg");
+                mCurrentPhotoFile = photoFile2.getPath();
+                    if(photoFile != null){
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile2));
+                        startActivityForResult(intent, PHOTO_REQUEST);
+                    }
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+
+
             }
         });
 
@@ -76,36 +95,44 @@ public class MainMenu extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
+    public ViewAdapter getViewAdapter(){
+        return mAdapter;
+    }
     @Override
-    protected void onActivityResult(int requestCode,int resultCode,Intent data){
-        if(requestCode == PHOTO_REQUEST) {
+    protected void onActivityResult(int requestCode,int resultCode,Intent data) {
+        if (requestCode == PHOTO_REQUEST) {
             try {
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                if (bitmap != null) {
-                    for(int i = 0;i<100;++i) {
-                        File file = new File(mContext.getFilesDir(), "Picture" + pic_number);
-                        FileOutputStream fOut = new FileOutputStream(file);
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+                //Uri pathToPic = data.getData();
+                //if (pathToPic != null) {
 
-                        ListEntry LE;
-                        LE = new ListEntry(bitmap, file.getName(), df.format(new Date()));
-                        editor.putString(file.getName(), df.format(new Date()).toString());
-                        editor.apply();
-                        fOut.flush();
-                        fOut.close();
-                        mAdapter.addData(LE);
-                        //Toast.makeText(getApplicationContext(), "Picture" + pic_number, Toast.LENGTH_SHORT).show();
-                        ++pic_number;
-                        editor.putInt(key_pic_number, pic_number);
-
-                        editor.apply();
-                    }
+                Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(mCurrentPhotoFile));
+                File file = new File(mContext.getFilesDir(), "Thumb" + pic_number);
+                FileOutputStream fOut = new FileOutputStream(file);
+                if(bitmap != null) {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
                 }
+                ListEntry LE;
+                LE = new ListEntry(bitmap, file.getName(), df.format(new Date()));
+                editor.putString(file.getName(), df.format(new Date()).toString());
+                editor.apply();
+                fOut.flush();
+                fOut.close();
+                mAdapter.addData(LE);
+                Toast.makeText(getApplicationContext(), "Picture" + pic_number, Toast.LENGTH_SHORT).show();
+                ++pic_number;
+                editor.putInt(key_pic_number, pic_number);
+
+                editor.apply();
+
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (RuntimeException e) {
                 e.printStackTrace();
             }
         }
     }
+
+
 
     @Override
     public void onBackPressed() {

@@ -26,11 +26,13 @@ public class Model {
         editor = sharedPref.edit();
         for(File  a : files){
             try {
-                Bitmap b = BitmapFactory.decodeStream(new FileInputStream(a));
-                //dateConverter = MainMenu.df.parse(sharedPref.getString(a.getName(),""));
-                ListEntry LE;
-                LE = new ListEntry(b, a.getName(), sharedPref.getString(a.getName(),""));
-                listEntries.add(0,LE);
+                if(a.getName().contains("_Thumb")) {
+                    Bitmap b = BitmapFactory.decodeStream(new FileInputStream(a));
+                    //dateConverter = MainMenu.df.parse(sharedPref.getString(a.getName(),""));
+                    ListEntry LE;
+                    LE = new ListEntry(b, a.getName(), sharedPref.getString(a.getName(), ""));
+                    listEntries.add(0, LE);
+                }
             }
             catch (FileNotFoundException e){
                 return null;
