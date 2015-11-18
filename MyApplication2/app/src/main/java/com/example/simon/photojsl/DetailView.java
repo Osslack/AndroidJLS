@@ -8,8 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 
 public class DetailView extends AppCompatActivity {
 
@@ -20,16 +19,16 @@ public class DetailView extends AppCompatActivity {
         Intent intent = getIntent();
         String filename = intent.getStringExtra("Titel");
         Context context = getApplicationContext();
-        try {
-            FileInputStream fIn = openFileInput(filename);
-            Bitmap picture = BitmapFactory.decodeStream(fIn);
+
+            //FileInputStream fIn = openFileInput(filename);
+            File pic = new File(getApplicationContext().getExternalFilesDir(""),filename);
+            Bitmap thumbnail = BitmapFactory.decodeFile(pic.getAbsolutePath());
+            //Bitmap picture = BitmapFactory.decodeStream(fIn);
             ImageView iV = (ImageView) findViewById(R.id.imageView_Detail);
-            if(picture != null) {
-                iV.setImageBitmap(picture);
+            if(thumbnail != null) {
+                iV.setImageBitmap(thumbnail);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+
 
 
 

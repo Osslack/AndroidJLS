@@ -20,12 +20,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -43,7 +39,7 @@ public class MainMenu extends AppCompatActivity
     private Context mContext;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
-    private static String mCurrentPhotoFile;
+    private static File mCurrentPhotoFile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,11 +64,14 @@ public class MainMenu extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                File photoFile = new File(mContext.getFilesDir(), "Picture" + pic_number +".jpg");
-                Uri pictureUri = Uri.fromFile(photoFile);
-                mCurrentPhotoFile = photoFile.getAbsolutePath();
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                intent.resolveActivity(getPackageManager());
+                mCurrentPhotoFile = new File(mContext.getExternalFilesDir(""), "Picture" + pic_number +".jpg");
+                Uri pictureUri = Uri.fromFile(mCurrentPhotoFile);
+                String pathFile = mCurrentPhotoFile.getAbsolutePath();
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCurrentPhotoFile));
                 startActivityForResult(intent, PHOTO_REQUEST);
+                //ImageView iv = (ImageView) findViewById(R.id.imageView2);
+                //iv.setImageURI(Uri.fromFile(mCurrentPhotoFile));
 
 
             }
@@ -92,9 +91,44 @@ public class MainMenu extends AppCompatActivity
     }
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data) {
-        if (requestCode == PHOTO_REQUEST) {
+        if (requestCode == PHOTO_REQUEST && resultCode == RESULT_OK) {
 
-            try {
+                /*if(!mCurrentPhotoFile.exists()){
+                    mCurrentPhotoFile.createNewFile();
+                }*/
+                final BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+
+                final String file = mCurrentPhotoFile.getAbsolutePath();
+                BitmapFactory.decodeFile(file, options);
+                options.inSampleSize = 6;
+                options.inJustDecodeBounds = false;
+                Bitmap thumbnail = BitmapFactory.decodeFile(file);
+
+
+                //Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+                //File thumbFile = new File(mContext.getFilesDir(),"Thumb" + pic_number);
+                //FileOutputStream fo = new FileOutputStream(mCurrentPhotoFile);
+                //if(thumbnail != null){
+                //    thumbnail.compress(Bitmap.CompressFormat.JPEG,85,fo);
+                //}
+                ListEntry LE = new ListEntry(thumbnail,mCurrentPhotoFile.getName(),df.format(new Date()).toString());
+                editor.putString(mCurrentPhotoFile.getName(), df.format(new Date()).toString());
+                editor.apply();
+                mAdapter.addData(LE);
+                ++pic_number;
+                editor.putInt(key_pic_number, pic_number);
+                editor.apply();
+
+            }
+            //catch (FileNotFoundException e){
+            //    e.printStackTrace();
+            //}
+            //catch (IOException e){
+            //    e.printStackTrace();
+            //}
+
+            /*try {
                 File picture = new File(mCurrentPhotoFile);
                 //Uri pathToPic = data.getData();
                 //if (pathToPic != null) {
@@ -113,19 +147,16 @@ public class MainMenu extends AppCompatActivity
                 fOut.flush();
                 fOut.close();
                 mAdapter.addData(LE);
-
                 ++pic_number;
                 editor.putInt(key_pic_number, pic_number);
-
                 editor.apply();
-
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (RuntimeException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
-    }
+
 
 
 
