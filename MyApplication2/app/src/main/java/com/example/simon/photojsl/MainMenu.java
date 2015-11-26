@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -40,6 +39,8 @@ public class MainMenu extends AppCompatActivity
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
     private static File mCurrentPhotoFile;
+    private static String mPathToFile;
+    private static String mFilename;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,10 +66,11 @@ public class MainMenu extends AppCompatActivity
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 intent.resolveActivity(getPackageManager());
-                mCurrentPhotoFile = new File(mContext.getExternalFilesDir(""), "Picture" + pic_number +".jpg");
-                Uri pictureUri = Uri.fromFile(mCurrentPhotoFile);
-                String pathFile = mCurrentPhotoFile.getAbsolutePath();
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mCurrentPhotoFile));
+                File picture = new File(mContext.getExternalFilesDir(""), "Picture" + pic_number +".jpg");
+                mFilename = picture.getName();
+                Uri pictureUri = Uri.fromFile(picture);
+                mPathToFile = picture.getAbsolutePath();
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, pictureUri);
                 startActivityForResult(intent, PHOTO_REQUEST);
                 //ImageView iv = (ImageView) findViewById(R.id.imageView2);
                 //iv.setImageURI(Uri.fromFile(mCurrentPhotoFile));
@@ -92,28 +94,21 @@ public class MainMenu extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data) {
         if (requestCode == PHOTO_REQUEST && resultCode == RESULT_OK) {
-
+                Bitmap picture = Model.loadThumbFromFile(mPathToFile);
                 /*if(!mCurrentPhotoFile.exists()){
                     mCurrentPhotoFile.createNewFile();
                 }*/
-                final BitmapFactory.Options options = new BitmapFactory.Options();
+                /*final BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
 
                 final String file = mCurrentPhotoFile.getAbsolutePath();
                 BitmapFactory.decodeFile(file, options);
-                options.inSampleSize = 6;
+                options.inSampleSize = Model.calculateInSampleSize(options);
                 options.inJustDecodeBounds = false;
-                Bitmap thumbnail = BitmapFactory.decodeFile(file);
-
-
-                //Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-                //File thumbFile = new File(mContext.getFilesDir(),"Thumb" + pic_number);
-                //FileOutputStream fo = new FileOutputStream(mCurrentPhotoFile);
-                //if(thumbnail != null){
-                //    thumbnail.compress(Bitmap.CompressFormat.JPEG,85,fo);
-                //}
-                ListEntry LE = new ListEntry(thumbnail,mCurrentPhotoFile.getName(),df.format(new Date()).toString());
-                editor.putString(mCurrentPhotoFile.getName(), df.format(new Date()).toString());
+                Bitmap thumbnail = BitmapFactory.decodeFile(file, options);
+                Bitmap part = Bitmap.createBitmap(thumbnail, thumbnail.getWidth()/2-Model.thumbWidth/2,thumbnail.getHeight()/2-Model.thumbHeight/2,Model.thumbWidth,Model.thumbHeight, null, true);*/
+                ListEntry LE = new ListEntry(picture,mFilename,df.format(new Date()).toString());
+                editor.putString(mFilename, df.format(new Date()).toString());
                 editor.apply();
                 mAdapter.addData(LE);
                 ++pic_number;
