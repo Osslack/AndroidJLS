@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by simon on 27.10.15.
@@ -14,13 +13,26 @@ public class ListEntry {
     private String mTitle;
     private String mDate;
     private Uri mSource;
-    private static List<ListEntry> mListEntries = new ArrayList<ListEntry>();
+    private static ArrayList<ListEntry> mListEntries = new ArrayList<ListEntry>();
     public ListEntry(Bitmap image,String title,String date){
         mImage = image;
         mTitle = title;
         mDate = date;
 
         mListEntries.add(this);
+    }
+    public ListEntry(String title,String date){
+        mTitle = title;
+        mDate = date;
+        mImage = null;
+
+
+    }
+    public void addBitmap (Bitmap bitmap){
+        if(mImage == null){
+            mImage = bitmap;
+            mListEntries.add(this);
+        }
     }
 
     public Bitmap getImage() {
@@ -38,8 +50,7 @@ public class ListEntry {
     public Uri getSource(){
         return mSource;
     }
-    public static List<ListEntry>  getAllListEntrys(){
+    public static ArrayList<ListEntry>  getAllListEntrys(){
         return mListEntries;
-
     }
 }

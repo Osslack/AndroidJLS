@@ -72,10 +72,6 @@ public class MainMenu extends AppCompatActivity
                 mPathToFile = picture.getAbsolutePath();
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, pictureUri);
                 startActivityForResult(intent, PHOTO_REQUEST);
-                //ImageView iv = (ImageView) findViewById(R.id.imageView2);
-                //iv.setImageURI(Uri.fromFile(mCurrentPhotoFile));
-
-
             }
         });
 
@@ -95,18 +91,6 @@ public class MainMenu extends AppCompatActivity
     protected void onActivityResult(int requestCode,int resultCode,Intent data) {
         if (requestCode == PHOTO_REQUEST && resultCode == RESULT_OK) {
                 Bitmap picture = Model.loadThumbFromFile(mPathToFile);
-                /*if(!mCurrentPhotoFile.exists()){
-                    mCurrentPhotoFile.createNewFile();
-                }*/
-                /*final BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inJustDecodeBounds = true;
-
-                final String file = mCurrentPhotoFile.getAbsolutePath();
-                BitmapFactory.decodeFile(file, options);
-                options.inSampleSize = Model.calculateInSampleSize(options);
-                options.inJustDecodeBounds = false;
-                Bitmap thumbnail = BitmapFactory.decodeFile(file, options);
-                Bitmap part = Bitmap.createBitmap(thumbnail, thumbnail.getWidth()/2-Model.thumbWidth/2,thumbnail.getHeight()/2-Model.thumbHeight/2,Model.thumbWidth,Model.thumbHeight, null, true);*/
                 ListEntry LE = new ListEntry(picture,mFilename,df.format(new Date()).toString());
                 editor.putString(mFilename, df.format(new Date()).toString());
                 editor.apply();
@@ -116,40 +100,6 @@ public class MainMenu extends AppCompatActivity
                 editor.apply();
 
             }
-            //catch (FileNotFoundException e){
-            //    e.printStackTrace();
-            //}
-            //catch (IOException e){
-            //    e.printStackTrace();
-            //}
-
-            /*try {
-                File picture = new File(mCurrentPhotoFile);
-                //Uri pathToPic = data.getData();
-                //if (pathToPic != null) {
-                
-                Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoFile);
-                File file = new File(mContext.getFilesDir(), "Thumb" + pic_number);
-                FileOutputStream fOut = new FileOutputStream(file);
-                if(bitmap != null) {
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-                    Toast.makeText(getApplicationContext(), "Picture" + pic_number, Toast.LENGTH_SHORT).show();
-                }
-                ListEntry LE;
-                LE = new ListEntry(bitmap, file.getName(), df.format(new Date()));
-                editor.putString(file.getName(), df.format(new Date()).toString());
-                editor.apply();
-                fOut.flush();
-                fOut.close();
-                mAdapter.addData(LE);
-                ++pic_number;
-                editor.putInt(key_pic_number, pic_number);
-                editor.apply();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }*/
         }
 
 

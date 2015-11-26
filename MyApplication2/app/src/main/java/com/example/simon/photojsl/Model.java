@@ -29,14 +29,6 @@ public class Model {
         for (File a : files) {
             String pathToFile = a.getAbsolutePath();
             Bitmap thumbnail = loadThumbFromFile(pathToFile);
-            /*final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(pathToFile, options);
-            options.inSampleSize = calculateInSampleSize(options);
-            options.inJustDecodeBounds = false;
-            Bitmap b = BitmapFactory.decodeFile(pathToFile, options);
-            Bitmap part = Bitmap.createBitmap(b, b.getWidth() / 2 - thumbWidth / 2, b.getHeight() / 2 - thumbHeight / 2, thumbWidth, thumbHeight, null, true);
-            //dateConverter = MainMenu.df.parse(sharedPref.getString(a.getName(),""));*/
             LE = new ListEntry(thumbnail, a.getName(), sharedPref.getString(a.getName(), "Kappa"));
             listEntries.add(0, LE);
 
