@@ -56,14 +56,8 @@ public class DetailView extends AppCompatActivity {
                 emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, m_pic.getName());
                 emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "powered by JLS Software");
                 emailIntent.setType("image/png");
-                Uri imageUri = null;
-                try {
-                    imageUri = Uri.parse(m_pic.getCanonicalPath());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                emailIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(m_pic));
                 startActivity(Intent.createChooser(emailIntent, "Send mail"));
                 break;
             case R.id.action_save:
