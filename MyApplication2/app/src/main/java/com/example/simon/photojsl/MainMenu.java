@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ public class MainMenu extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static final int PHOTO_REQUEST = 1;
+    static final int RESULT_LOAD_IMAGE = 2;
     static final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
     static final String preference_file_key = "Jendrik_Simon_Louisa_Preference_File_1337";
     static final String key_pic_number = "JSL_PIC_NUMBER";
@@ -82,14 +84,6 @@ public class MainMenu extends AppCompatActivity
             }
         });
 
-        //DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        //ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-        //        this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        //drawer.setDrawerListener(toggle);
-        //toggle.syncState();
-
-        //NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        //navigationView.setNavigationItemSelectedListener(this);
     }
     public ViewAdapter getViewAdapter(){
         return mAdapter;
@@ -107,10 +101,24 @@ public class MainMenu extends AppCompatActivity
                 editor.apply();
 
             }
+        else if(requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK){
+            Uri selectedImage = data.getData();
+            //File image = new File(selectedImage.toString());
+            Bitmap pic = BitmapFactory.decodeFile(selectedImage.getPath());
+            //File picture = new File(mContext.getExternalFilesDir(""), "Picture" + pic_number +".jpg");
+            //String filename = picture.getName();
+            //Uri pictureUri = Uri.fromFile(picture);
+            //Bitmap picture = Model.loadThumbFromFile(selectedImage.toString());
+            ListEntry LE = new ListEntry(pic,mFilename,df.format(new Date()).toString());
+            editor.putString(mFilename, df.format(new Date()).toString());
+            editor.apply();
+            mAdapter.addData(LE);
+            ++pic_number;
+            editor.putInt(key_pic_number, pic_number);
+            editor.apply();
+
         }
-
-
-
+        }
 
     @Override
     public void onBackPressed() {
@@ -137,8 +145,12 @@ public class MainMenu extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch(id){
+            case R.id.action_gallery  : Intent i = new Intent(
+                                        Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                        startActivityForResult(i, RESULT_LOAD_IMAGE);
+                                        return true;
+            case R.id.action_settings : return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -150,7 +162,7 @@ public class MainMenu extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
+        /*if (id == R.id.nav_camara) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 
@@ -162,12 +174,13 @@ public class MainMenu extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
-        }
+        }*/
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);*/
         return true;
     }
+
 
 
 }
