@@ -95,13 +95,13 @@ public class MainMenu extends AppCompatActivity
             Uri selectedImage = data.getData();
             String date = getPhotoCapturedDate(selectedImage);
             if(date == null) {
-                File pic = new File(getRealPathFromURI(selectedImage));
+                /*File pic = new File(getRealPathFromURI(selectedImage));
                 if(pic != null){
                 Date lastModDate = new Date(pic.lastModified());
                 date = df.format(lastModDate).toString();
-                }else{
+                }else{*/
                     date = df.format(new Date()).toString();
-                }
+                //}
             }
             File dest = newImageFile();
             copyFile(selectedImage,dest);
