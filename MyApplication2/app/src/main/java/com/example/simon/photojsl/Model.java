@@ -37,7 +37,7 @@ public class Model {
         return listEntries;
     }
 
-    public static int calculateInSampleSize(    //as found in the google documentation
+    public static int calculateInThumbSampleSize(    //as found in the google documentation
                                                 BitmapFactory.Options options) {
         // Raw height and width of image
         final int height = options.outHeight;
@@ -63,7 +63,7 @@ public class Model {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, options);
-        options.inSampleSize = calculateInSampleSize(options);
+        options.inSampleSize = calculateInThumbSampleSize(options);
         options.inJustDecodeBounds = false;
         Bitmap b = BitmapFactory.decodeFile(path, options);
         Bitmap part = Bitmap.createBitmap(b, b.getWidth() / 2 - thumbWidth / 2, b.getHeight() / 2 - thumbHeight / 2, thumbWidth, thumbHeight, null, true);
