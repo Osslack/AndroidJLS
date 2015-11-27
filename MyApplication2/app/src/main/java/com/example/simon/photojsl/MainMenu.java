@@ -1,9 +1,12 @@
 package com.example.simon.photojsl;
 
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,6 +38,7 @@ public class MainMenu extends AppCompatActivity
     static final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
     static final String preference_file_key = "Jendrik_Simon_Louisa_Preference_File_1337";
     static final String key_pic_number = "JSL_PIC_NUMBER";
+    static final String key_default_filename = "JSL_DEFFILENAME";
     static public int pic_number = 0;
     private RecyclerView mRecyclerView;
     private ViewAdapter mAdapter;
@@ -44,6 +48,7 @@ public class MainMenu extends AppCompatActivity
     private SharedPreferences.Editor editor;
     private static String mPathToFile;
     private static String mFilename;
+    public static String default_Filename;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,11 +63,11 @@ public class MainMenu extends AppCompatActivity
         mContext = getApplicationContext();
         mAdapter = new ViewAdapter(Model.load_entries(mContext));
         mRecyclerView.setAdapter(mAdapter);
-        //Get the Shared Preferences etc. and load the pic_number
+        //Get the Shared Preferences etc. and load the pic_number and default_filename
         sharedPref = mContext.getSharedPreferences(preference_file_key, mContext.MODE_PRIVATE);
         editor = sharedPref.edit();
         pic_number = sharedPref.getInt(key_pic_number, 0);
-
+        default_Filename = sharedPref.getString(key_default_filename,"Picture");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -84,19 +89,29 @@ public class MainMenu extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data) {
         if (requestCode == PHOTO_REQUEST && resultCode == RESULT_OK) {
-            loadImage(mPathToFile, mFilename);
+            addImage(mPathToFile, mFilename,df.format(new Date()).toString());
             }
         else if(requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK){
             Uri selectedImage = data.getData();
+            String date = getPhotoCapturedDate(selectedImage);
+            if(date == null) {
+                File pic = new File(getRealPathFromURI(selectedImage));
+                if(pic != null){
+                Date lastModDate = new Date(pic.lastModified());
+                date = df.format(lastModDate).toString();
+                }else{
+                    date = df.format(new Date()).toString();
+                }
+            }
             File dest = newImageFile();
             copyFile(selectedImage,dest);
-            loadImage(dest.getAbsolutePath(),dest.getName());
+            addImage(dest.getAbsolutePath(), dest.getName(), date);
         }
         }
-    public void loadImage(String pathToFile,String filename){
+    public void addImage(String pathToFile,String filename,String date){
         Bitmap picture = Model.loadThumbFromFile(pathToFile);
-        ListEntry LE = new ListEntry(picture,filename,df.format(new Date()).toString());
-        saveDate(filename);
+        ListEntry LE = new ListEntry(picture,filename,date);
+        saveDate(filename,date);
         mAdapter.addData(LE);
         increasePicNumber();
     }
@@ -105,12 +120,12 @@ public class MainMenu extends AppCompatActivity
         editor.putInt(key_pic_number, pic_number);
         editor.apply();
     }
-    public void saveDate(String filename){
-        editor.putString(filename, df.format(new Date()).toString());
+    public void saveDate(String filename, String date){
+        editor.putString(filename, date);
         editor.apply();
     }
     public File newImageFile(){
-        return new File(mContext.getExternalFilesDir(""), "Picture" + pic_number);
+        return new File(mContext.getExternalFilesDir(""), default_Filename + pic_number);
     }
 
     private void copyFile(Uri source,File dest){
@@ -138,6 +153,32 @@ public class MainMenu extends AppCompatActivity
             } catch (IOException e){}
         }
     }
+    private String getPhotoCapturedDate(Uri path){
+        String filePath = getRealPathFromURI(path);
+        //String capturedDate = null;
+        try {
+            ExifInterface exif = new ExifInterface(filePath);
+            if(exif != null){
+
+                return exif.getAttribute(ExifInterface.TAG_DATETIME);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    private String getRealPathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        CursorLoader loader = new CursorLoader(mContext, contentUri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String result = cursor.getString(column_index);
+        cursor.close();
+        return result;
+    }
     @Override
     public void onBackPressed() {
             super.onBackPressed();
@@ -163,7 +204,9 @@ public class MainMenu extends AppCompatActivity
                                         Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                         startActivityForResult(i, RESULT_LOAD_IMAGE);
                                         return true;
-            case R.id.action_settings : return true;
+            case R.id.action_settings : Intent intent = new Intent(mContext,Settings.class);
+                                        startActivity(intent);
+                                        return true;
         }
 
         return super.onOptionsItemSelected(item);
