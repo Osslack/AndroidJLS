@@ -25,18 +25,7 @@ public class DetailView extends AppCompatActivity {
         setContentView(R.layout.activity_detail_view);
         Intent intent = getIntent();
         String filename = intent.getStringExtra("Titel");
-
-        //Context context = getApplicationContext();
         m_pic = new File(getApplicationContext().getExternalFilesDir(""), filename);
-        //BitmapWorkerTask task = new BitmapWorkerTask((ImageView)findViewById(R.id.imageView_Detail));
-        //task.execute(path);
-        /*final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(path, options);
-        options.inSampleSize = Model.calculateInScreenSampleSize(options);
-        options.inJustDecodeBounds = false;
-        Bitmap b = BitmapFactory.decodeFile(path, options);
-        //Bitmap thumbnail = BitmapFactory.decodeFile(pic.getAbsolutePath());*/
         m_iV = (ImageView) findViewById(R.id.imageView_Detail);
         if (m_pic != null) {
             m_iV.setImageURI(Uri.fromFile(m_pic));
