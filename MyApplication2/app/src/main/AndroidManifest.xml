@@ -39,5 +39,4 @@
                 android:value="com.example.simon.photojsl.MainMenu" />
         </activity>
     </application>
-
 </manifest>
