@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -35,7 +36,8 @@ public class MainMenu extends AppCompatActivity
 
     static final int PHOTO_REQUEST = 1;
     static final int RESULT_LOAD_IMAGE = 2;
-    static final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss");
+    static final SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy kk:mm:ss");
+    private static final SimpleDateFormat dfParser = new SimpleDateFormat("yyyy:MM:dd kk:mm:ss");
     static final String preference_file_key = "Jendrik_Simon_Louisa_Preference_File_1337";
     static final String key_pic_number = "JSL_PIC_NUMBER";
     static final String key_default_filename = "JSL_DEFFILENAME";
@@ -93,18 +95,14 @@ public class MainMenu extends AppCompatActivity
             }
         else if(requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK){
             Uri selectedImage = data.getData();
-            String date = getPhotoCapturedDate(selectedImage);
-            if(date == null) {
-                /*File pic = new File(getRealPathFromURI(selectedImage));
-                if(pic != null){
-                Date lastModDate = new Date(pic.lastModified());
-                date = df.format(lastModDate).toString();
-                }else{*/
-                    date = df.format(new Date()).toString();
-                //}
-            }
+
             File dest = newImageFile();
-            copyFile(selectedImage,dest);
+            copyFile(selectedImage, dest);
+            String date = getPhotoCapturedDate(dest.getAbsolutePath());
+            if(date == null) {
+                date = df.format(new Date()).toString();
+                Toast.makeText(getApplicationContext(), "No date found, current date used instead", Toast.LENGTH_SHORT).show();
+            }
             addImage(dest.getAbsolutePath(), dest.getName(), date);
         }
         }
@@ -153,14 +151,17 @@ public class MainMenu extends AppCompatActivity
             } catch (IOException e){}
         }
     }
-    private String getPhotoCapturedDate(Uri path){
-        String filePath = getRealPathFromURI(path);
+    private String getPhotoCapturedDate(String filePath){
+
+        if(filePath == null){
+            return null;
+        }
         //String capturedDate = null;
         try {
             ExifInterface exif = new ExifInterface(filePath);
             if(exif != null){
 
-                return exif.getAttribute(ExifInterface.TAG_DATETIME);
+                return df.format(dfParser.parse(exif.getAttribute(ExifInterface.TAG_DATETIME))).toString();
             }
         } catch (IOException e) {
             e.printStackTrace();
