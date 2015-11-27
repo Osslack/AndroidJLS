@@ -17,6 +17,8 @@ public class Model {
     private static SharedPreferences.Editor editor;
     public static int thumbHeight = 200;
     public static int thumbWidth = 200;
+    public static int screenWidth = 0;
+    public static int screenHeight = 0;
 
     public static ArrayList<ListEntry> load_entries(Context context) {
         ArrayList<ListEntry> listEntries = new ArrayList<ListEntry>();
@@ -69,5 +71,29 @@ public class Model {
         Bitmap part = Bitmap.createBitmap(b, b.getWidth() / 2 - thumbWidth / 2, b.getHeight() / 2 - thumbHeight / 2, thumbWidth, thumbHeight, null, true);
         return part;
     }
+
+    public static int calculateInScreenSampleSize(BitmapFactory.Options options){
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+
+        if (height > screenHeight || width > screenWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > screenHeight
+                    && (halfWidth / inSampleSize) > screenWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
 }
 

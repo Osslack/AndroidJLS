@@ -23,7 +23,13 @@ public class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(String... params) {
         path = params[0];
-        return BitmapFactory.decodeFile(path);
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+        options.inSampleSize = Model.calculateInScreenSampleSize(options);
+        options.inJustDecodeBounds = false;
+        Bitmap b = BitmapFactory.decodeFile(path, options);
+        return b;
     }
 
     // Once complete, see if ImageView is still around and set bitmap.

@@ -1,9 +1,7 @@
 package com.example.simon.photojsl;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -20,14 +18,21 @@ public class DetailView extends AppCompatActivity {
         setContentView(R.layout.activity_detail_view);
         Intent intent = getIntent();
         String filename = intent.getStringExtra("Titel");
-        //BitmapWorkerTask task = new BitmapWorkerTask((ImageView)findViewById(R.id.imageView_Detail));
-        //task.execute(filename);
-        Context context = getApplicationContext();
+
+        //Context context = getApplicationContext();
         File pic = new File(getApplicationContext().getExternalFilesDir(""), filename);
-        Bitmap thumbnail = BitmapFactory.decodeFile(pic.getAbsolutePath());
+        //BitmapWorkerTask task = new BitmapWorkerTask((ImageView)findViewById(R.id.imageView_Detail));
+        //task.execute(path);
+        /*final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+        options.inSampleSize = Model.calculateInScreenSampleSize(options);
+        options.inJustDecodeBounds = false;
+        Bitmap b = BitmapFactory.decodeFile(path, options);
+        //Bitmap thumbnail = BitmapFactory.decodeFile(pic.getAbsolutePath());*/
         ImageView iV = (ImageView) findViewById(R.id.imageView_Detail);
-        if (thumbnail != null) {
-            iV.setImageBitmap(thumbnail);
+        if (pic != null) {
+            iV.setImageURI(Uri.fromFile(pic));
         }
 
 

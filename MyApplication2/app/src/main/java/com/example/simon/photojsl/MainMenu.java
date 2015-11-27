@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,7 +59,13 @@ public class MainMenu extends AppCompatActivity
         sharedPref = mContext.getSharedPreferences(preference_file_key, mContext.MODE_PRIVATE);
         editor = sharedPref.edit();
         pic_number = sharedPref.getInt(key_pic_number, 0);
-
+        if(Model.screenHeight == 0 && Model.screenWidth == 0) {
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            Model.screenHeight = size.y;
+            Model.screenWidth = size.x;
+        }
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
