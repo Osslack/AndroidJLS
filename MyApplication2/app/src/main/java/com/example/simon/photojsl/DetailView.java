@@ -15,6 +15,7 @@ import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class DetailView extends AppCompatActivity {
     private File m_pic;
@@ -24,7 +25,7 @@ public class DetailView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_view);
         Intent intent = getIntent();
-        String filename = intent.getStringExtra("Titel");
+        String filename = intent.getStringExtra("Filename");
         m_pic = new File(getApplicationContext().getExternalFilesDir(""), filename);
         m_iV = (ImageView) findViewById(R.id.imageView_Detail);
         if (m_pic != null) {
@@ -47,7 +48,7 @@ public class DetailView extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch(id){
             case R.id.action_delete:
-                deleteFile(m_pic.getAbsolutePath());
+                m_pic.delete();
                 break;
             case R.id.action_send:
                 final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
@@ -55,7 +56,12 @@ public class DetailView extends AppCompatActivity {
                 emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, m_pic.getName());
                 emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "powered by JLS Software");
                 emailIntent.setType("image/png");
-                Uri imageUri = Uri.parse(m_pic.getAbsolutePath());
+                Uri imageUri = null;
+                try {
+                    imageUri = Uri.parse(m_pic.getCanonicalPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 emailIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
                 startActivity(Intent.createChooser(emailIntent, "Send mail"));
