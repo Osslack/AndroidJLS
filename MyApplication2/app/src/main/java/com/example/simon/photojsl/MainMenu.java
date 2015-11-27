@@ -88,6 +88,11 @@ public class MainMenu extends AppCompatActivity
         });
 
     }
+
+    public ViewAdapter getAdapter(){
+        return mAdapter;
+    }
+
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data) {
         if (requestCode == PHOTO_REQUEST && resultCode == RESULT_OK) {

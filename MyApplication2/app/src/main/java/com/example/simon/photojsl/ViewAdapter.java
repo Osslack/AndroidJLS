@@ -39,6 +39,18 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
         return vh;
     }
 
+    public boolean deleteListEntry(String name){
+        boolean removed = false;
+        for(ListEntry e: mListEntries){
+            if(e.getTitle().equals(name)){
+                mListEntries.remove(e);
+                removed = true;
+            }
+        }
+        if(removed){notifyDataSetChanged();}
+        return removed;
+    }
+
 
 
     @Override
