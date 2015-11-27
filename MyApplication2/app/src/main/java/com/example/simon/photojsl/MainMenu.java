@@ -4,25 +4,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -41,7 +42,6 @@ public class MainMenu extends AppCompatActivity
     private Context mContext;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
-    private static File mCurrentPhotoFile;
     private static String mPathToFile;
     private static String mFilename;
     @Override
@@ -50,6 +50,7 @@ public class MainMenu extends AppCompatActivity
         setContentView(R.layout.activity_main_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //Get the RecyclerView up and running
         mRecyclerView = (RecyclerView) findViewById(R.id.view);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
@@ -57,16 +58,10 @@ public class MainMenu extends AppCompatActivity
         mContext = getApplicationContext();
         mAdapter = new ViewAdapter(Model.load_entries(mContext));
         mRecyclerView.setAdapter(mAdapter);
+        //Get the Shared Preferences etc. and load the pic_number
         sharedPref = mContext.getSharedPreferences(preference_file_key, mContext.MODE_PRIVATE);
         editor = sharedPref.edit();
         pic_number = sharedPref.getInt(key_pic_number, 0);
-        if(Model.screenHeight == 0 && Model.screenWidth == 0) {
-            Display display = getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            Model.screenHeight = size.y;
-            Model.screenWidth = size.x;
-        }
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -75,59 +70,77 @@ public class MainMenu extends AppCompatActivity
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 intent.resolveActivity(getPackageManager());
-                File picture = new File(mContext.getExternalFilesDir(""), "Picture" + pic_number +".jpg");
+
+                File picture = newImageFile();
                 mFilename = picture.getName();
-                Uri pictureUri = Uri.fromFile(picture);
                 mPathToFile = picture.getAbsolutePath();
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, pictureUri);
+
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(picture));
                 startActivityForResult(intent, PHOTO_REQUEST);
             }
         });
 
     }
-    public ViewAdapter getViewAdapter(){
-        return mAdapter;
-    }
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data) {
         if (requestCode == PHOTO_REQUEST && resultCode == RESULT_OK) {
-                Bitmap picture = Model.loadThumbFromFile(mPathToFile);
-                ListEntry LE = new ListEntry(picture,mFilename,df.format(new Date()).toString());
-                editor.putString(mFilename, df.format(new Date()).toString());
-                editor.apply();
-                mAdapter.addData(LE);
-                ++pic_number;
-                editor.putInt(key_pic_number, pic_number);
-                editor.apply();
-
+            loadImage(mPathToFile, mFilename);
             }
         else if(requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK){
             Uri selectedImage = data.getData();
-            //File image = new File(selectedImage.toString());
-            Bitmap pic = BitmapFactory.decodeFile(selectedImage.getPath());
-            //File picture = new File(mContext.getExternalFilesDir(""), "Picture" + pic_number +".jpg");
-            //String filename = picture.getName();
-            //Uri pictureUri = Uri.fromFile(picture);
-            //Bitmap picture = Model.loadThumbFromFile(selectedImage.toString());
-            ListEntry LE = new ListEntry(pic,mFilename,df.format(new Date()).toString());
-            editor.putString(mFilename, df.format(new Date()).toString());
-            editor.apply();
-            mAdapter.addData(LE);
-            ++pic_number;
-            editor.putInt(key_pic_number, pic_number);
-            editor.apply();
-
+            File dest = newImageFile();
+            copyFile(selectedImage,dest);
+            loadImage(dest.getAbsolutePath(),dest.getName());
         }
         }
+    public void loadImage(String pathToFile,String filename){
+        Bitmap picture = Model.loadThumbFromFile(pathToFile);
+        ListEntry LE = new ListEntry(picture,filename,df.format(new Date()).toString());
+        saveDate(filename);
+        mAdapter.addData(LE);
+        increasePicNumber();
+    }
+    public void increasePicNumber(){
+        ++pic_number;
+        editor.putInt(key_pic_number, pic_number);
+        editor.apply();
+    }
+    public void saveDate(String filename){
+        editor.putString(filename, df.format(new Date()).toString());
+        editor.apply();
+    }
+    public File newImageFile(){
+        return new File(mContext.getExternalFilesDir(""), "Picture" + pic_number);
+    }
 
+    private void copyFile(Uri source,File dest){
+        BufferedOutputStream out = null;
+        BufferedInputStream in = null;
+        try {
+            InputStream isSRC = mContext.getContentResolver().openInputStream(source);
+            in = new BufferedInputStream(isSRC);
+            out = new BufferedOutputStream(new FileOutputStream(dest));
+            byte[] buffer = new byte[1024];
+            in.read(buffer);
+            do {
+                out.write(buffer);
+            } while (in.read(buffer) != -1);
+        } catch (FileNotFoundException e) {
+            //TODO
+            e.printStackTrace();
+        } catch (IOException e) {
+            //TODO
+            e.printStackTrace();
+        } finally {
+            try {
+                if (in != null) in.close();
+                if (out != null) out.close();
+            } catch (IOException e){}
+        }
+    }
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
             super.onBackPressed();
-        }
     }
 
     @Override
@@ -160,24 +173,6 @@ public class MainMenu extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        /*if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }*/
-
-        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);*/
         return true;
     }
 

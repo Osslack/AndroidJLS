@@ -8,6 +8,10 @@ import java.util.ArrayList;
 /**
  * Created by simon on 27.10.15.
  */
+
+/**
+ * Data structure used to store an image and the corresponding date and title.
+ */
 public class ListEntry {
     private Bitmap mImage;
     private String mTitle;

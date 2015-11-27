@@ -74,8 +74,7 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
                 public void onClick(View v) {
                     //TODO: Call Detail-View -> Create Detail-View first
                     Intent detail_view = new Intent(v.getContext(), DetailView.class);
-                    detail_view.putExtra("Titel", mTextView1.getText());
-                    //detail_view.putExtra("Titel", mTextView1.getText());
+                    detail_view.putExtra("Filename", mTextView1.getText());
                     v.getContext().startActivity(detail_view);
 
                     Toast.makeText(itemView.getContext(), "The Item Clicked is: " + ((TextView) v.findViewById(R.id.textView2)).getText(), Toast.LENGTH_SHORT).show();

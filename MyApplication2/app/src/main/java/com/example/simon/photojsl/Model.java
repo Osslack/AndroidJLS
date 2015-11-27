@@ -73,8 +73,8 @@ public class Model {
         options.inSampleSize = calculateInThumbSampleSize(options);
         options.inJustDecodeBounds = false;
         Bitmap b = BitmapFactory.decodeFile(path, options);
-        //Bitmap part = Bitmap.createBitmap(b, b.getWidth() / 2 - thumbWidth / 2, b.getHeight() / 2 - thumbHeight / 2, thumbWidth, thumbHeight, null, true);
-        return b;
+        Bitmap part = Bitmap.createBitmap(b, b.getWidth() / 2 - thumbWidth / 2, b.getHeight() / 2 - thumbHeight / 2, thumbWidth, thumbHeight, null, true);
+        return part;
     }
 
     public static int calculateInScreenSampleSize(BitmapFactory.Options options){
