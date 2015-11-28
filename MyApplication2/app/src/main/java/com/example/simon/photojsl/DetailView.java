@@ -45,11 +45,11 @@ public class DetailView extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public  boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        switch(id){
+        /*switch(id){
             case R.id.action_delete:
                 if(MainMenu.getAdapter().deleteListEntry(m_pic.getName())){
                     m_pic.delete();
@@ -73,7 +73,7 @@ public class DetailView extends AppCompatActivity {
                 values.put(MediaStore.MediaColumns.DATA, m_pic.getAbsolutePath());
                 getApplicationContext().getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
                 break;
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 }

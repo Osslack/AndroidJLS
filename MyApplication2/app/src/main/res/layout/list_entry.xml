@@ -1,34 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="5dp">
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView3"
-        android:maxHeight="100px"
-        android:maxWidth="100px"
-        android:minHeight="100px"
-        android:minWidth="100px"
-        android:scaleType="fitCenter" />
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:weightSum="4"
+        android:clipChildren="false">
+        <!-- A CardView that contains a TextView -->
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view"
+            android:layout_gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="75dp"
+            card_view:cardCornerRadius="8dp"
+            card_view:cardBackgroundColor="#DEEBF7"
+            card_view:cardElevation="10dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Titel"
-            android:id="@+id/textView2" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Datum"
-            android:id="@+id/textView3" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="4dp"
+                android:id="@+id/imageView3"
+                android:scaleType="fitCenter"
+                android:layout_weight="2"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end">
+
+                <TextView
+                    android:layout_width="271dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="start"
+                    android:text="Titel"
+                    android:textSize="20dp"
+                    android:id="@+id/textView2"
+                    android:gravity="center_vertical" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Datum"
+                    android:textSize="20dp"
+                    android:id="@+id/textView3"
+                    android:gravity="center_vertical" />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
     </LinearLayout>
 </LinearLayout>
