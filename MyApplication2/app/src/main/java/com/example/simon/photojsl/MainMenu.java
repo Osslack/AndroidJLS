@@ -42,6 +42,7 @@ public class MainMenu extends AppCompatActivity
     static final String key_pic_number = "JSL_PIC_NUMBER";
     static final String key_default_filename = "JSL_DEFFILENAME";
     static public int pic_number = 0;
+    static final String file_extension = ".png";
     private RecyclerView mRecyclerView;
     private ViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -128,7 +129,7 @@ public class MainMenu extends AppCompatActivity
         editor.apply();
     }
     public File newImageFile(){
-        return new File(mContext.getExternalFilesDir(""), default_Filename + pic_number);
+        return new File(mContext.getExternalFilesDir(""), default_Filename + pic_number + file_extension);
     }
 
     private void copyFile(Uri source,File dest){
