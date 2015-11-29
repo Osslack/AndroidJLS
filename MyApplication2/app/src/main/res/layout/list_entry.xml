@@ -20,7 +20,18 @@
             card_view:cardCornerRadius="8dp"
             card_view:cardBackgroundColor="#DEEBF7"
             card_view:cardElevation="10dp"
+<<<<<<< HEAD
             card_view:cardUseCompatPadding="true">
+=======
+            card_view:cardUseCompatPadding="true"
+            card_view:cardPreventCornerOverlap="false"
+            android:nestedScrollingEnabled="false"
+            android:measureAllChildren="false"
+            android:longClickable="false"
+            android:minHeight="220px"
+            android:layout_marginTop="-10dp"
+            android:layout_marginBottom="-10dp">
+>>>>>>> d7e753564756570403da0f16a8ccd67491cf9dfa
 
 
             <ImageView
@@ -36,7 +47,8 @@
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="end">
+                android:layout_gravity="end"
+                android:paddingLeft="220px">
 
                 <TextView
                     android:layout_width="225dp"

@@ -1,5 +1,6 @@
 package com.example.simon.photojsl;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,7 +19,7 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
     public ViewAdapter(ArrayList<ListEntry> ListEntries){
         this.mListEntries = ListEntries;
     }
-
+    static final int RESULT_VIEW_IMAGE = 3;
     public ListEntry getEntryByTitle (String title){
         for(ListEntry LE : mListEntries){
             if(LE.getTitle() == title){
@@ -41,13 +42,16 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
 
     public boolean deleteListEntry(String name){
         boolean removed = false;
+        ListEntry toDelete = null;
         for(ListEntry e: mListEntries){
             if(e.getTitle().equals(name)){
-                mListEntries.remove(e);
+                toDelete = e;
                 removed = true;
             }
         }
-        if(removed){notifyDataSetChanged();}
+        if(removed && toDelete != null){
+            mListEntries.remove(toDelete);
+            notifyDataSetChanged();}
         return removed;
     }
 
@@ -86,8 +90,8 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
                     //TODO: Call Detail-View -> Create Detail-View first
                     Intent detail_view = new Intent(v.getContext(), DetailView.class);
                     detail_view.putExtra("Filename", mTextView1.getText());
-                    v.getContext().startActivity(detail_view);
-
+//                    v.getContext().startActivity(detail_view);
+                    ((Activity)v.getContext()).startActivityForResult(detail_view, RESULT_VIEW_IMAGE);
                     //Toast.makeText(itemView.getContext(), "The Item Clicked is: " + ((TextView) v.findViewById(R.id.textView2)).getText(), Toast.LENGTH_SHORT).show();
                 }
             });

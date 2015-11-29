@@ -36,6 +36,7 @@ public class MainMenu extends AppCompatActivity
 
     static final int PHOTO_REQUEST = 1;
     static final int RESULT_LOAD_IMAGE = 2;
+    static final int RESULT_VIEW_IMAGE = 3;
     static final SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy kk:mm:ss");
     private static final SimpleDateFormat dfParser = new SimpleDateFormat("yyyy:MM:dd kk:mm:ss");
     static final String preference_file_key = "Jendrik_Simon_Louisa_Preference_File_1337";
@@ -71,7 +72,6 @@ public class MainMenu extends AppCompatActivity
         editor = sharedPref.edit();
         pic_number = sharedPref.getInt(key_pic_number, 0);
         default_Filename = sharedPref.getString(key_default_filename,"Picture");
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,10 +108,16 @@ public class MainMenu extends AppCompatActivity
             if(date == null) {
                 date = df.format(new Date()).toString();
                 Toast.makeText(getApplicationContext(), "No date found, current date used instead", Toast.LENGTH_SHORT).show();
-            }
+            }//ads
             addImage(dest.getAbsolutePath(), dest.getName(), date);
         }
+        else if(requestCode == RESULT_VIEW_IMAGE && resultCode == RESULT_CANCELED){
+            if(data != null) {
+                String name = data.getAction();
+                mAdapter.deleteListEntry(name);
+            }
         }
+    }
     public void addImage(String pathToFile,String filename,String date){
         Bitmap picture = Model.loadThumbFromFile(pathToFile);
         ListEntry LE = new ListEntry(picture,filename,date);
