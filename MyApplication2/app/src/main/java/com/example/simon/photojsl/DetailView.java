@@ -6,8 +6,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.media.Image;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,9 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
 import static android.support.v4.content.FileProvider.getUriForFile;
 
@@ -33,9 +32,17 @@ public class DetailView extends AppCompatActivity {
         Intent intent = getIntent();
         String filename = intent.getStringExtra("Filename");
         m_pic = new File(getApplicationContext().getExternalFilesDir(null), filename);
-        m_iV = (ImageView) findViewById(R.id.imageView_Detail);
-        if (m_pic != null) {
-            m_iV.setImageURI(Uri.fromFile(m_pic));
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(m_pic.getAbsolutePath(), options);
+        if(options.outHeight > 4096 || options.outWidth > 4096){
+            Toast.makeText(getApplicationContext(), m_pic.getName() + " is too large to be displayed", Toast.LENGTH_SHORT).show();
+        }else {
+            m_iV = (ImageView) findViewById(R.id.imageView_Detail);
+            if (m_pic != null) {
+
+                m_iV.setImageURI(Uri.fromFile(m_pic));
+            }
         }
 
 
@@ -59,11 +66,8 @@ public class DetailView extends AppCompatActivity {
                     values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
                     values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
                     values.put(MediaStore.MediaColumns.DATA, m_pic.getAbsolutePath());
-
-//                    Uri picUri2 = getUriForFile(getApplicationContext(), "com.mydomain.fileprovider", m_pic);
-                    //values.put(MediaStore.MediaColumns.DATA, picUri2.getPath() );
-//                grantUriPermission(MediaStore.Images.Media,picUri2,Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                    Toast.makeText(getApplicationContext(), m_pic.getName() + " was added to the gallery", Toast.LENGTH_SHORT).show();
                 }
                 return;
             }

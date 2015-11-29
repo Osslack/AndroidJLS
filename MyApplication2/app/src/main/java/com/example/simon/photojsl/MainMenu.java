@@ -72,7 +72,6 @@ public class MainMenu extends AppCompatActivity
         editor = sharedPref.edit();
         pic_number = sharedPref.getInt(key_pic_number, 0);
         default_Filename = sharedPref.getString(key_default_filename,"Picture");
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,8 +112,10 @@ public class MainMenu extends AppCompatActivity
             addImage(dest.getAbsolutePath(), dest.getName(), date);
         }
         else if(requestCode == RESULT_VIEW_IMAGE && resultCode == RESULT_CANCELED){
-            String name = data.getAction();
-            mAdapter.deleteListEntry(name);
+            if(data != null) {
+                String name = data.getAction();
+                mAdapter.deleteListEntry(name);
+            }
         }
     }
     public void addImage(String pathToFile,String filename,String date){
