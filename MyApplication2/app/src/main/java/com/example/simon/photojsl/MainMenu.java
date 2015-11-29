@@ -36,6 +36,7 @@ public class MainMenu extends AppCompatActivity
 
     static final int PHOTO_REQUEST = 1;
     static final int RESULT_LOAD_IMAGE = 2;
+    static final int RESULT_VIEW_IMAGE = 3;
     static final SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy kk:mm:ss");
     private static final SimpleDateFormat dfParser = new SimpleDateFormat("yyyy:MM:dd kk:mm:ss");
     static final String preference_file_key = "Jendrik_Simon_Louisa_Preference_File_1337";
@@ -111,7 +112,11 @@ public class MainMenu extends AppCompatActivity
             }
             addImage(dest.getAbsolutePath(), dest.getName(), date);
         }
+        else if(requestCode == RESULT_VIEW_IMAGE && resultCode == RESULT_CANCELED){
+            String name = data.getAction();
+            ((ViewAdapter)mRecyclerView.getAdapter()).deleteListEntry(name);
         }
+    }
     public void addImage(String pathToFile,String filename,String date){
         Bitmap picture = Model.loadThumbFromFile(pathToFile);
         ListEntry LE = new ListEntry(picture,filename,date);
