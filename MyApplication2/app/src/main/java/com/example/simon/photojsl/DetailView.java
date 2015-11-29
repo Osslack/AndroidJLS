@@ -65,7 +65,7 @@ public class DetailView extends AppCompatActivity {
                 values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
                 Uri picUri2 = getUriForFile(getApplicationContext(), "com.mydomain.fileprovider", m_pic);
                 //values.put(MediaStore.MediaColumns.DATA, picUri2.getPath() );
-                grantUriPermission(MediaStore.Images.Media,picUri2,Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                //grantUriPermission(MediaStore.Images.Media,picUri2,Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                 break;
         }

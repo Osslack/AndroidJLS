@@ -18,6 +18,7 @@ public class ListEntry {
     private String mDate;
     private Uri mSource;
     private static ArrayList<ListEntry> mListEntries = new ArrayList<ListEntry>();
+
     public ListEntry(Bitmap image,String title,String date){
         mImage = image;
         mTitle = title;
