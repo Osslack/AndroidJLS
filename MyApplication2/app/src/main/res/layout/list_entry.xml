@@ -20,7 +20,14 @@
             card_view:cardCornerRadius="8dp"
             card_view:cardBackgroundColor="#DEEBF7"
             card_view:cardElevation="10dp"
-            card_view:cardUseCompatPadding="true">
+            card_view:cardUseCompatPadding="true"
+            card_view:cardPreventCornerOverlap="false"
+            android:nestedScrollingEnabled="false"
+            android:measureAllChildren="false"
+            android:longClickable="false"
+            android:minHeight="220px"
+            android:layout_marginTop="-10dp"
+            android:layout_marginBottom="-10dp">
 
 
             <ImageView
