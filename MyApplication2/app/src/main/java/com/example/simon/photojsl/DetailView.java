@@ -1,5 +1,6 @@
 package com.example.simon.photojsl;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -45,9 +46,10 @@ public class DetailView extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch(id){
             case R.id.action_delete:
-                /*if(MainMenu.getAdapter().deleteListEntry(m_pic.getName())){
-                    m_pic.delete();
-                }*/
+                m_pic.delete();
+                getIntent().setAction(m_pic.getName());
+                setResult(Activity.RESULT_CANCELED, getIntent());
+                finish();
                 break;
             case R.id.action_send:
                 Intent i = new Intent(Intent.ACTION_SEND);
@@ -65,7 +67,7 @@ public class DetailView extends AppCompatActivity {
                 values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
                 Uri picUri2 = getUriForFile(getApplicationContext(), "com.mydomain.fileprovider", m_pic);
                 //values.put(MediaStore.MediaColumns.DATA, picUri2.getPath() );
-                grantUriPermission(MediaStore.Images.Media,picUri2,Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//                grantUriPermission(MediaStore.Images.Media,picUri2,Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
                 break;
         }
