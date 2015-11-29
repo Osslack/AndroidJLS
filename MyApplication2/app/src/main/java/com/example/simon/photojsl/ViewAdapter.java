@@ -42,14 +42,16 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
 
     public boolean deleteListEntry(String name){
         boolean removed = false;
-        ArrayList<ListEntry> listEntriesTemp = mListEntries;
-        for(ListEntry e: listEntriesTemp){
+        ListEntry toDelete = null;
+        for(ListEntry e: mListEntries){
             if(e.getTitle().equals(name)){
-                mListEntries.remove(e);
+                toDelete = e;
                 removed = true;
             }
         }
-        if(removed){notifyDataSetChanged();}
+        if(removed && toDelete != null){
+            mListEntries.remove(toDelete);
+            notifyDataSetChanged();}
         return removed;
     }
 

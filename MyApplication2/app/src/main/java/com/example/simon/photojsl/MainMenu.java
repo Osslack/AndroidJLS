@@ -114,7 +114,7 @@ public class MainMenu extends AppCompatActivity
         }
         else if(requestCode == RESULT_VIEW_IMAGE && resultCode == RESULT_CANCELED){
             String name = data.getAction();
-            ((ViewAdapter)mRecyclerView.getAdapter()).deleteListEntry(name);
+            mAdapter.deleteListEntry(name);
         }
     }
     public void addImage(String pathToFile,String filename,String date){
