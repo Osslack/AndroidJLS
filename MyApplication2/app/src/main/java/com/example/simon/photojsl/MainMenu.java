@@ -109,7 +109,7 @@ public class MainMenu extends AppCompatActivity
             if(date == null) {
                 date = df.format(new Date()).toString();
                 Toast.makeText(getApplicationContext(), "No date found, current date used instead", Toast.LENGTH_SHORT).show();
-            }
+            }//ads
             addImage(dest.getAbsolutePath(), dest.getName(), date);
         }
         else if(requestCode == RESULT_VIEW_IMAGE && resultCode == RESULT_CANCELED){
