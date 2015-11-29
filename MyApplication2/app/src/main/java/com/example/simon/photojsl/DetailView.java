@@ -1,10 +1,8 @@
 package com.example.simon.photojsl;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,14 +57,14 @@ public class DetailView extends AppCompatActivity {
                 startActivity(Intent.createChooser(i,"Choose an application to share your picture"));
                 break;
             case R.id.action_save:
-                ContentValues values = new ContentValues();
+                /*ContentValues values = new ContentValues();
                 values.put(MediaStore.Images.Media.TITLE, m_pic.getName());
                 values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
                 values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
                 Uri picUri2 = getUriForFile(getApplicationContext(), "com.mydomain.fileprovider", m_pic);
                 //values.put(MediaStore.MediaColumns.DATA, picUri2.getPath() );
                 grantUriPermission(MediaStore.Images.Media,picUri2,Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);*/
                 break;
         }
         return super.onOptionsItemSelected(item);
